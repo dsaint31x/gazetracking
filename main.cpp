@@ -17,6 +17,7 @@ typedef struct mask
 }mask;
 
 void CallBackFunc(int event, int x, int y, int flags, void* userdata);
+void inverse(Mat& img);
 
 int main(int argc, char* argv[])
 {
@@ -79,6 +80,7 @@ int main(int argc, char* argv[])
 			//BRG -> grayscale -> binary
 			cvtColor(selec_frame, gray_frame, CV_RGB2GRAY);
 			threshold(gray_frame, binary_frame, thresh, 255, THRESH_BINARY);
+			inverse(binary_frame);
 
 			//morphological opening closing 작은 점들을 제거와 영역의 구멍 메우기 
 			erode(binary_frame, binary_frame, getStructuringElement(MORPH_ELLIPSE, Size(3, 3)));
@@ -136,5 +138,20 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata)
 	if (event == CV_EVENT_RBUTTONDOWN)
 	{
 		kkr_mask->isChecked = false;
+	}
+}
+
+void inverse(Mat& img)
+{
+	if (img.channels() == 1)
+	{
+		for (int i = 0; i < img.rows; i++)
+		{
+			uchar* p = img.ptr<uchar>(i);
+			for (int j = 0; j < img.cols; j++)
+			{
+				p[j] = 255 - p[j];
+			}
+		}
 	}
 }
