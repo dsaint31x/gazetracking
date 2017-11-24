@@ -83,12 +83,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Mat left_hProjR(left_pupil.rows, 1, CV_8U);
-	for (int i = 0; i < left_pupil.rows; i++)
-	{
-		left_hProjR.at<uchar>(i, 0) = countNonZero(left_pupil(Rect(0, i, left_pupil.cols, 1)));
-	}
-
 	//finding indexing value using horizontal histogram
 	hIndex_data kkr_hIndex;
 	Mat left_hProj(1, left_pupil.rows, CV_8U);
@@ -127,12 +121,6 @@ int main(int argc, char* argv[])
 	//finding indexing value using horizontal histogram
 	Mat right_hProj(1, right_pupil.rows, CV_8U);
 	makeHistProj(right_pupil, right_hProj, HORIZONTAL);
-
-	//Mat right_hProjR(right_pupil.rows, 1, CV_8U);
-	//for (int i = 0; i < right_pupil.rows; i++)
-	//{
-	//	right_hProj.at<uchar>(i, 0) = countNonZero(right_pupil(Rect(0, i, right_pupil.cols, 1)));
-	//}
 
 	//indexing hor_proj
 	for (int i = 1; i < right_hProj.cols; i++)
