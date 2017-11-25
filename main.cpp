@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		}
 		else if (key == 's')
 		{
-			imwrite("data\findpupil.jpg", binary_frame);
+			imwrite("findpupil.jpg", binary_frame);
 		}
 	}
 
