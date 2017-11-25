@@ -22,6 +22,7 @@ using namespace std;
 using namespace cv;
 
 void makeHistProj(Mat& src, Mat& dst, int direction);
+void transposedMatrix(Mat& src, Mat& dst);
 
 
 int main(int argc, char* argv[])
@@ -169,4 +170,9 @@ void makeHistProj(Mat& src, Mat& dst, int direction)
 			dst.at<uchar>(0, i) = countNonZero(src(Rect(0, i, src.cols, 1)));
 		}
 	}
+}
+
+void transposedMatrix(Mat& src, Mat& dst)
+{
+
 }
