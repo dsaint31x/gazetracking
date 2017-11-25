@@ -1,9 +1,6 @@
 #include <iostream>
 #include "opencv_3.3.0.h"
 
-using namespace std;
-using namespace cv;
-
 #define VERTICAL 1
 #define HORIZONTAL 2
 
@@ -21,7 +18,11 @@ typedef struct hIndex_data
 	int second_pupil[2];
 }hIndex_data;
 
+using namespace std;
+using namespace cv;
+
 void makeHistProj(Mat& src, Mat& dst, int direction);
+
 
 int main(int argc, char* argv[])
 {
