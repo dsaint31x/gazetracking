@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
 	Mat binary_vProj(1, binary_frame.cols, CV_8U);
 	makeHistProj(binary_frame, binary_vProj, VERTICAL);
 
+
 	for (int i = 1; i < binary_vProj.cols; i++)
 	{
 		if (kkr_vIndex.hasPupil == false)
