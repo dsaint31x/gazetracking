@@ -4,32 +4,34 @@
 #define VERTICAL 1
 #define HORIZONTAL 2
 
+using namespace std;
+using namespace cv;
+
 typedef struct vIndex_data
 {
-	bool hasFPupil = false;
+	bool hasPupil = false;
 	int first_pupil[2];
+	int first_center;
 	int second_pupil[2];
+	int second_center;
 }vIndex_data;
 
 typedef struct hIndex_data
 {
-	bool hasFPupil = false;
+	bool hasPupil = false;
 	int first_pupil[2];
+	int first_center;
 	int second_pupil[2];
+	int second_center;
 }hIndex_data;
 
-using namespace std;
-using namespace cv;
-
 void makeHistProj(Mat& src, Mat& dst, int direction);
-void transposedMatrix(Mat& src, Mat& dst);
-
 
 int main(int argc, char* argv[])
 {
 	Mat binary_frame = imread("findpupil.jpg", IMREAD_GRAYSCALE);
 	namedWindow("test", WINDOW_NORMAL);
-	imshow("test", binary_frame);
+	//imshow("test", binary_frame);
 
 	//finding indexing value using vertical histogram
 	vIndex_data kkr_vIndex;
@@ -38,7 +40,7 @@ int main(int argc, char* argv[])
 
 	for (int i = 1; i < binary_vProj.cols; i++)
 	{
-		if (kkr_vIndex.hasFPupil == false)
+		if (kkr_vIndex.hasPupil == false)
 		{
 			if (binary_vProj.at<uchar>(0, i) != 0 && binary_vProj.at<uchar>(0, i - 1) == 0)
 			{
@@ -47,7 +49,7 @@ int main(int argc, char* argv[])
 			else if (binary_vProj.at<uchar>(0, i) == 0 && binary_vProj.at<uchar>(0, i - 1) != 0)
 			{
 				kkr_vIndex.first_pupil[1] = i - 1;
-				kkr_vIndex.hasFPupil = true;
+				kkr_vIndex.hasPupil = true;
 			}
 		}
 		else
@@ -59,16 +61,10 @@ int main(int argc, char* argv[])
 			else if (binary_vProj.at<uchar>(0, i) == 0 && binary_vProj.at<uchar>(0, i - 1) != 0)
 			{
 				kkr_vIndex.second_pupil[1] = i-1;
-				kkr_vIndex.hasFPupil = false;
+				kkr_vIndex.hasPupil = false;
 			}
 		}
 	}
-
-	//°ª È®ÀÎ
-	cout << "(" << kkr_vIndex.first_pupil[0] << "," << kkr_vIndex.first_pupil[1] << ")" << endl;
-	cout << "(" << kkr_vIndex.second_pupil[0] << "," << kkr_vIndex.second_pupil[1] << ")" << endl;
-
-
 
 	//make only left pupil Mat
 	Mat left_pupil = binary_frame.clone();
@@ -103,8 +99,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	cout << "(" << kkr_hIndex.first_pupil[0] << "," << kkr_hIndex.first_pupil[1] << ")" << endl;
-
 	//make only right pupil Mat
 	Mat right_pupil = binary_frame.clone();
 	for (int i = 0; i < right_pupil.rows; i++)
@@ -137,16 +131,65 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	cout << "(" << kkr_hIndex.second_pupil[0] << "," << kkr_hIndex.second_pupil[1] << ")" << endl;
+	int numerator = 0;
+	int denominator = 0;
 
-	namedWindow("left", WINDOW_NORMAL);
-	imshow("left", left_pupil);
-	namedWindow("right", WINDOW_NORMAL);
-	imshow("right", right_pupil);
-	namedWindow("left_hist", WINDOW_NORMAL);
-	imshow("left_hist", left_hProj);
-	namedWindow("right_hist", WINDOW_NORMAL);
-	imshow("right_hist", right_hProj);
+	for (int i = kkr_vIndex.first_pupil[0]; i <= kkr_vIndex.first_pupil[1]; i++)
+	{
+		numerator = numerator + binary_vProj.at<uchar>(0, i)*i;
+		denominator = denominator + binary_vProj.at<uchar>(0, i);
+	}
+
+	kkr_vIndex.first_center = (int)numerator / denominator;
+	numerator = 0;
+	denominator = 0;
+
+	for (int i = kkr_vIndex.second_pupil[0]; i <= kkr_vIndex.second_pupil[1]; i++)
+	{
+		numerator = numerator + binary_vProj.at<uchar>(0, i)*i;
+		denominator = denominator + binary_vProj.at<uchar>(0, i);
+	}
+
+	kkr_vIndex.second_center = numerator / denominator;
+	numerator = 0;
+	denominator = 0;
+
+	for (int i = kkr_hIndex.first_pupil[0]; i <= kkr_hIndex.first_pupil[1]; i++)
+	{
+		numerator = numerator + left_hProj.at<uchar>(0, i)*i;
+		denominator = denominator + left_hProj.at<uchar>(0, i);
+	}
+
+	kkr_hIndex.first_center = numerator / denominator;
+	numerator = 0;
+	denominator = 0;
+
+	for (int i = kkr_hIndex.second_pupil[0]; i <= kkr_hIndex.second_pupil[1]; i++)
+	{
+		numerator = numerator + right_hProj.at<uchar>(0, i)*i;
+		denominator = denominator + right_hProj.at<uchar>(0, i);
+	}
+
+	kkr_hIndex.second_center = numerator / denominator;
+	numerator = 0;
+	denominator = 0;
+
+	cout << "first pupil x (" << kkr_vIndex.first_pupil[0] << "," << kkr_vIndex.first_pupil[1] << ")" << endl;
+	cout << "first pupil y (" << kkr_hIndex.first_pupil[0] << "," << kkr_hIndex.first_pupil[1] << ")" << endl;
+	cout << "second pupil x (" << kkr_vIndex.second_pupil[0] << "," << kkr_vIndex.second_pupil[1] << ")" << endl;
+	cout << "second pupil y (" << kkr_hIndex.second_pupil[0] << "," << kkr_hIndex.second_pupil[1] << ")" << endl;
+
+
+	cout << "first pupil (" << kkr_vIndex.first_center << "," << kkr_hIndex.first_center << ")" << endl;
+	cout << "second pupil (" << kkr_vIndex.second_center << "," << kkr_hIndex.second_center << ")" << endl;
+
+
+	rectangle(binary_frame, Rect(Point(kkr_vIndex.first_center - 8, kkr_hIndex.first_center - 8), Point(kkr_vIndex.first_center + 8, kkr_hIndex.first_center + 8)), Scalar(255, 255, 255));
+	rectangle(binary_frame, Rect(Point(kkr_vIndex.second_center - 8, kkr_hIndex.second_center - 8), Point(kkr_vIndex.second_center + 8, kkr_hIndex.second_center + 8)), Scalar(255, 255, 255));
+	//rectangle(binary_frame, Rect(Point(kkr_vIndex.first_pupil[0], kkr_hIndex.first_pupil[0]), Point(kkr_vIndex.first_pupil[1], kkr_hIndex.first_pupil[1])), Scalar(255, 255, 255));
+	//rectangle(binary_frame, Rect(Point(kkr_vIndex.second_pupil[0], kkr_hIndex.second_pupil[0]), Point(kkr_vIndex.second_pupil[1], kkr_hIndex.second_pupil[1])), Scalar(255, 255, 255));
+
+	imshow("test", binary_frame);
 
 
 	waitKey(0);
@@ -170,9 +213,4 @@ void makeHistProj(Mat& src, Mat& dst, int direction)
 			dst.at<uchar>(0, i) = countNonZero(src(Rect(0, i, src.cols, 1)));
 		}
 	}
-}
-
-void transposedMatrix(Mat& src, Mat& dst)
-{
-
 }
