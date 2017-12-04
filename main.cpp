@@ -82,7 +82,6 @@ int main(int argc, char* argv[])
 
 	//window 생성 and window callback 함수 등록
 	namedWindow("original_frame", WINDOW_NORMAL);
-	namedWindow("binary", WINDOW_NORMAL);
 	namedWindow("center", WINDOW_NORMAL);
 	setMouseCallback("original_frame", CallBackFunc, &kkr_mask);
 
@@ -118,7 +117,7 @@ int main(int argc, char* argv[])
 			//roi 영역만 저장
 			selec_frame = original_frame(Rect(kkr_mask.left_top, kkr_mask.right_bottom)).clone();
 
-			imshow("original_frame", copy_frame);
+			//imshow("original_frame", copy_frame);
 
 			//BRG -> grayscale -> binarization -> inverse
 			cvtColor(selec_frame, gray_frame, CV_RGB2GRAY);
@@ -267,12 +266,16 @@ int main(int argc, char* argv[])
 			//중심점에서 사각형 그리기
 			rectangle(binary_frame, Rect(Point(kkr_pupilIndex.firstPupil_center.x - 8, kkr_pupilIndex.firstPupil_center.y - 7), Point(kkr_pupilIndex.firstPupil_center.x + 8, kkr_pupilIndex.firstPupil_center.y + 8)), Scalar(255, 255, 255));
 			rectangle(binary_frame, Rect(Point(kkr_pupilIndex.secondPupil_center.x - 8, kkr_pupilIndex.secondPupil_center.y - 7), Point(kkr_pupilIndex.secondPupil_center.x + 8, kkr_pupilIndex.secondPupil_center.y + 8)), Scalar(255, 255, 255));
+			//중심점에서 사각형 그리기
+			rectangle(copy_frame, Rect(Point(kkr_mask.left_top.x + kkr_pupilIndex.firstPupil_center.x - 8, kkr_mask.left_top.y + kkr_pupilIndex.firstPupil_center.y - 7), Point(kkr_mask.left_top.x + kkr_pupilIndex.firstPupil_center.x + 8, kkr_mask.left_top.y + kkr_pupilIndex.firstPupil_center.y + 8)), Scalar(255, 255, 255));
+			rectangle(copy_frame, Rect(Point(kkr_mask.left_top.x + kkr_pupilIndex.secondPupil_center.x - 8, kkr_mask.left_top.y + kkr_pupilIndex.secondPupil_center.y - 7), Point(kkr_mask.left_top.x + kkr_pupilIndex.secondPupil_center.x + 8, kkr_mask.left_top.y + kkr_pupilIndex.secondPupil_center.y + 8)), Scalar(255, 255, 255));
 
 			//동공이 나타나는 index 값을 통해 사각형 그리기
 			//rectangle(binary_frame, Rect(Point(kkr_vIndex.first_pupil[0], kkr_hIndex.first_pupil[0]), Point(kkr_vIndex.first_pupil[1], kkr_hIndex.first_pupil[1])), Scalar(255, 255, 255));
 			//rectangle(binary_frame, Rect(Point(kkr_vIndex.second_pupil[0], kkr_hIndex.second_pupil[0]), Point(kkr_vIndex.second_pupil[1], kkr_hIndex.second_pupil[1])), Scalar(255, 255, 255));
 			
 			imshow("center", binary_frame);
+			imshow("original_frame", copy_frame);
 		}
 
 		int key = waitKey(1000 / FPS);
