@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 	stimulation kkr_stimulation;
 
 	//window 생성 and window callback 함수 등록
-	namedWindow("original_frame", WINDOW_AUTOSIZE);
+	namedWindow("original_frame", WINDOW_NORMAL);
 	namedWindow("center", WINDOW_NORMAL);
 	setMouseCallback("original_frame", CallBackFunc, &kkr_mask);
 
