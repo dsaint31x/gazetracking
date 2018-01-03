@@ -283,7 +283,7 @@ int main(int argc, char* argv[])
 			if (kkr_stimulation.stimualtion == true)
 			{
 				sprintf_s(filename, sizeof(filename), "stimulation\\stimulation%03d.png", kkr_stimulation.i);
-				stimulation_frame = imread(filename, CV_8UC3);
+				stimulation_frame = imread(filename, IMREAD_COLOR);
 				kkr_stimulation.i++;
 			}
 			
