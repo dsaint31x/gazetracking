@@ -54,6 +54,13 @@ typedef struct g_data
 	Point secondPupil_center;
 }g_data;
 
+typedef struct stimulation
+{
+	bool stimualtion = false;
+	int x=0;
+	int y=0;
+}stimulation;
+
 void inverse(Mat& img);
 void makeHistProj(Mat& src, Mat& dst, int direction);
 void getFirstCenter(Mat& vProj, Mat& hProj, g_data* p);
@@ -77,6 +84,8 @@ int main(int argc, char* argv[])
 	mask kkr_mask;
 	kkr_mask.x_offset = 80;
 	kkr_mask.y_offset = 30;
+
+	stimulation kkr_stimulation;
 
 	//window 생성 and window callback 함수 등록
 	namedWindow("original_frame", WINDOW_NORMAL);
@@ -256,9 +265,9 @@ int main(int argc, char* argv[])
 			getFirstCenter(left_vProj, left_hProj, kkr_pupilPointer);
 			getSecondCenter(right_vProj, right_hProj, kkr_pupilPointer);
 
-			//중심점에서 사각형 그리기
-			rectangle(binary_frame, Rect(Point(kkr_pupilIndex.firstPupil_center.x - 8, kkr_pupilIndex.firstPupil_center.y - 7), Point(kkr_pupilIndex.firstPupil_center.x + 8, kkr_pupilIndex.firstPupil_center.y + 8)), Scalar(255, 255, 255));
-			rectangle(binary_frame, Rect(Point(kkr_pupilIndex.secondPupil_center.x - 8, kkr_pupilIndex.secondPupil_center.y - 7), Point(kkr_pupilIndex.secondPupil_center.x + 8, kkr_pupilIndex.secondPupil_center.y + 8)), Scalar(255, 255, 255));
+			////중심점에서 사각형 그리기
+			//rectangle(binary_frame, Rect(Point(kkr_pupilIndex.firstPupil_center.x - 8, kkr_pupilIndex.firstPupil_center.y - 7), Point(kkr_pupilIndex.firstPupil_center.x + 8, kkr_pupilIndex.firstPupil_center.y + 8)), Scalar(255, 255, 255));
+			//rectangle(binary_frame, Rect(Point(kkr_pupilIndex.secondPupil_center.x - 8, kkr_pupilIndex.secondPupil_center.y - 7), Point(kkr_pupilIndex.secondPupil_center.x + 8, kkr_pupilIndex.secondPupil_center.y + 8)), Scalar(255, 255, 255));
 			//중심점에서 사각형 그리기
 			rectangle(copy_frame, Rect(Point(kkr_mask.left_top.x + kkr_pupilIndex.firstPupil_center.x - 8, kkr_mask.left_top.y + kkr_pupilIndex.firstPupil_center.y - 7), Point(kkr_mask.left_top.x + kkr_pupilIndex.firstPupil_center.x + 8, kkr_mask.left_top.y + kkr_pupilIndex.firstPupil_center.y + 8)), Scalar(255, 255, 255));
 			rectangle(copy_frame, Rect(Point(kkr_mask.left_top.x + kkr_pupilIndex.secondPupil_center.x - 8, kkr_mask.left_top.y + kkr_pupilIndex.secondPupil_center.y - 7), Point(kkr_mask.left_top.x + kkr_pupilIndex.secondPupil_center.x + 8, kkr_mask.left_top.y + kkr_pupilIndex.secondPupil_center.y + 8)), Scalar(255, 255, 255));
@@ -266,6 +275,17 @@ int main(int argc, char* argv[])
 			//동공이 나타나는 index 값을 통해 사각형 그리기
 			//rectangle(binary_frame, Rect(Point(kkr_vIndex.first_pupil[0], kkr_hIndex.first_pupil[0]), Point(kkr_vIndex.first_pupil[1], kkr_hIndex.first_pupil[1])), Scalar(255, 255, 255));
 			//rectangle(binary_frame, Rect(Point(kkr_vIndex.second_pupil[0], kkr_hIndex.second_pupil[0]), Point(kkr_vIndex.second_pupil[1], kkr_hIndex.second_pupil[1])), Scalar(255, 255, 255));
+
+			if (kkr_stimulation.stimualtion == true)
+			{
+				circle(copy_frame, Point(300, kkr_stimulation.y), 1, Scalar(255, 0, 0), 2);
+				kkr_stimulation.y++;
+				if (kkr_stimulation.y >= copy_frame.rows)
+				{
+					kkr_stimulation.y = 0;
+					kkr_stimulation.stimualtion = false;
+				}
+			}
 			
 			imshow("center", binary_frame);
 			imshow("original_frame", copy_frame);
@@ -279,6 +299,10 @@ int main(int argc, char* argv[])
 		else if (key == 's')
 		{
 			imwrite("findpupil.png", binary_frame);
+		}
+		else if (key == 'k')
+		{
+			kkr_stimulation.stimualtion = true;
 		}
 	}
 
