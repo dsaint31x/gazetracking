@@ -93,12 +93,12 @@ int main(int argc, char* argv[])
 	//window 생성 and window callback 함수 등록
 	namedWindow("original_frame", WINDOW_NORMAL);
 	namedWindow("center", WINDOW_NORMAL);
-	namedWindow("stimulation", CV_WINDOW_NORMAL);
+	namedWindow("stimulation", WINDOW_NORMAL);
 	setMouseCallback("original_frame", CallBackFunc, &kkr_mask);
 
 	//이진화를 위한 threshold trackbar 설정
 	int thresh = 30;
-	namedWindow("select threshold", WINDOW_KEEPRATIO);
+	namedWindow("select threshold", WINDOW_NORMAL);
 	cvCreateTrackbar("threshold", "select threshold", &thresh, 255);
 
 	while (true)
