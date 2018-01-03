@@ -24,6 +24,7 @@
 */
 
 #include <iostream>
+#include <stdio.h>
 #include "opencv_3.3.0.h"
 
 #define FPS 60
@@ -57,8 +58,7 @@ typedef struct g_data
 typedef struct stimulation
 {
 	bool stimualtion = false;
-	int x=0;
-	int y=0;
+	int i = 0;
 }stimulation;
 
 void inverse(Mat& img);
@@ -69,6 +69,9 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata);
 
 int main(int argc, char* argv[])
 {
+	char filename[100];
+	Mat stimulation_frame(480, 640, CV_8UC3);
+
 	cout << "미간을 선택해주세요." << endl;
 
 	//VideoCapture 객체 생성
@@ -90,6 +93,7 @@ int main(int argc, char* argv[])
 	//window 생성 and window callback 함수 등록
 	namedWindow("original_frame", WINDOW_NORMAL);
 	namedWindow("center", WINDOW_NORMAL);
+	namedWindow("stimulation", CV_WINDOW_NORMAL);
 	setMouseCallback("original_frame", CallBackFunc, &kkr_mask);
 
 	//이진화를 위한 threshold trackbar 설정
@@ -278,17 +282,14 @@ int main(int argc, char* argv[])
 
 			if (kkr_stimulation.stimualtion == true)
 			{
-				circle(copy_frame, Point(300, kkr_stimulation.y), 1, Scalar(255, 0, 0), 2);
-				kkr_stimulation.y++;
-				if (kkr_stimulation.y >= copy_frame.rows)
-				{
-					kkr_stimulation.y = 0;
-					kkr_stimulation.stimualtion = false;
-				}
+				sprintf_s(filename, sizeof(filename), "stimulation\\stimulation%03d.png", kkr_stimulation.i);
+				stimulation_frame = imread(filename, CV_8UC3);
+				kkr_stimulation.i++;
 			}
 			
 			imshow("center", binary_frame);
 			imshow("original_frame", copy_frame);
+			imshow("stimulation", stimulation_frame);
 		}
 
 		int key = waitKey(1000 / FPS);
@@ -303,6 +304,7 @@ int main(int argc, char* argv[])
 		else if (key == 'k')
 		{
 			kkr_stimulation.stimualtion = true;
+			kkr_stimulation.i = 0;
 		}
 	}
 
