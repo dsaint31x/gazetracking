@@ -62,7 +62,6 @@ void CallBackFunc(int event, int x, int y, int flags, void* userdata);
 
 int main(int argc, char* argv[])
 {
-	cout << "OpenCV Version : " << CV_VERSION << endl;
 	cout << "미간을 선택해주세요." << endl;
 
 	//VideoCapture 객체 생성
@@ -88,11 +87,6 @@ int main(int argc, char* argv[])
 	int thresh = 30;
 	namedWindow("select threshold", WINDOW_KEEPRATIO);
 	cvCreateTrackbar("threshold", "select threshold", &thresh, 255);
-	
-	//control mask
-	cout << "mask center move('8','4','5','6')" << endl;
-	cout << "mask size control('+','-')" << endl;
-	cout << "binary frame capture('s')" << endl;
 
 	while (true)
 	{
