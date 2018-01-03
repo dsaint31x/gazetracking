@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include "opencv_3.3.0.h"
-#include "opencv2\core.hpp"
 
 #define FPS 60
 #define VERTICAL 1
